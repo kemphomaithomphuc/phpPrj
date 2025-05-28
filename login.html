@@ -23,6 +23,16 @@
 </head>
 <body onload="checkLoginStatus()">
 <a href="login.html">Please Log In</a>
+<form id="loginForm">
+  <label for="who"><strong>User Name</strong></label>
+  <input type="text" id="who" name="who"><br><br>
+
+  <label for="pass"><strong>Password</strong></label>
+  <input type="password" id="pass" name="pass"><br><br>
+
+  <button type="submit">Log In</button>
+  <button type="button" onclick="cancelLogin()">Cancel</button>
+</form>
 
 <div id="loginSection" class="box">
   <h1>Please Log In</h1>
