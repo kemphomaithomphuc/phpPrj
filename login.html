@@ -5,48 +5,127 @@
   <title>4aaa4f26</title>
   <style>
     body { font-family: Arial, sans-serif; }
-    .box { border: 2px solid blue; padding: 15px; width: fit-content; margin-bottom: 20px; }
-    .error { color: red; margin-top: 0; }
-    input[type="text"], input[type="password"] { margin-bottom: 10px; padding: 5px; }
-    input[type="submit"] { margin-right: 10px; }
+    .box {
+      border: 2px solid blue;
+      padding: 20px;
+      width: fit-content;
+      margin: 20px;
+    }
+    .error { color: red; }
+    #gameOutput {
+      background-color: #f4f4f4;
+      padding: 10px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      border-radius: 5px;
+    }
   </style>
 </head>
-<body>
+<body onload="checkLoginStatus()">
 
-<div class="box" id="login-box">
+<div id="loginSection" class="box">
   <h1>Please Log In</h1>
-  <p id="error" class="error" style="display: none;">Incorrect password</p>
-  <form id="loginForm" onsubmit="return validateLogin();">
-    <label for="user">User Name</label><br>
-    <input type="text" id="user" name="user" required><br>
-    <label for="pass">Password</label><br>
-    <input type="password" id="pass" name="pass" required><br>
-    <input type="submit" value="Log In">
-    <input type="button" value="Cancel" onclick="cancelLogin();">
+  <form onsubmit="return checkLogin();">
+    <div id="errorMsg" class="error"></div>
+    <label><strong>User Name</strong><br>
+      <input type="text" id="username">
+    </label><br><br>
+
+    <label><strong>Password</strong><br>
+      <input type="password" id="password">
+    </label><br><br>
+
+    <button type="submit">Log In</button>
+    <button type="button" onclick="location.reload()">Cancel</button>
   </form>
   <p>For a password hint, view source and find a password hint in the HTML comments.</p>
+  <!-- Hint: The password is the language you're learning followed by 123 -->
 </div>
 
-<!-- Hint: The password is 'php123' -->
+<div id="gameSection" class="box" style="display:none;">
+  <h1>Rock Paper Scissors</h1>
+  <p>Welcome: <span id="userNameDisplay"></span></p>
+  <select id="userChoice">
+    <option value="">Select</option>
+    <option value="Rock">Rock</option>
+    <option value="Paper">Paper</option>
+    <option value="Scissors">Scissors</option>
+  </select>
+  <button onclick="playGame()">Play</button>
+  <button onclick="logout()">Logout</button>
+  <div id="gameOutput">Please select a strategy and press Play.</div>
+</div>
 
 <script>
-function validateLogin() {
-  const username = document.getElementById("user").value.trim();
-  const password = document.getElementById("pass").value;
+const validUsername = "umsi@umich.edu";
+const validPassword = "php123";
 
-  if (password === "badsecret42" && username==="umsi@umich.edu") {
-    localStorage.setItem("username", username);
-    window.location.href = "game.html";
-    return false;
+function checkLogin() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
+
+  if (username === validUsername && password === validPassword) {
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("username", "Chuck"); // customize as needed
+    showGame();
   } else {
-    document.getElementById("error").style.display = "block";
-    return false;
+    errorMsg.textContent = "Incorrect password";
+  }
+  return false;
+}
+
+function checkLoginStatus() {
+  if (localStorage.getItem("loggedIn") === "true") {
+    showGame();
+  } else {
+    showLogin();
   }
 }
 
-function cancelLogin() {
-  document.getElementById("loginForm").reset();
-  document.getElementById("error").style.display = "none";
+function showLogin() {
+  document.getElementById("loginSection").style.display = "block";
+  document.getElementById("gameSection").style.display = "none";
+}
+
+function showGame() {
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("gameSection").style.display = "block";
+  document.getElementById("userNameDisplay").textContent = localStorage.getItem("username");
+}
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("username");
+  location.reload();
+}
+
+function playGame() {
+  const human = document.getElementById("userChoice").value;
+  const output = document.getElementById("gameOutput");
+
+  if (!human) {
+    output.textContent = "Please select a strategy and press Play.";
+    return;
+  }
+
+  const choices = ["Rock", "Paper", "Scissors"];
+  const computer = choices[Math.floor(Math.random() * 3)];
+
+  let result = "";
+  if (human === computer) {
+    result = "Tie";
+  } else if (
+    (human === "Rock" && computer === "Scissors") ||
+    (human === "Paper" && computer === "Rock") ||
+    (human === "Scissors" && computer === "Paper")
+  ) {
+    result = "You Win";
+  } else {
+    result = "You Lose";
+  }
+
+  output.textContent += `\nHuman=${human} Computer=${computer} Result=${result}`;
 }
 </script>
 
