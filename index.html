@@ -1,21 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Rock Paper Scissors</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rock Paper Scissors - Send Choice via URL</title>
 </head>
 <body>
-  <h2>Login</h2>
-  <form action="/login" method="post">
-    <input type="text" name="who" placeholder="Email" required>
-    <input type="password" name="pass" placeholder="Password" required>
-    <input type="submit" value="Login">
+  <h1>Play Rock Paper Scissors</h1>
+
+  <form action="https://othersite.com/play" method="get" id="rpsForm">
+    <p>Select your choice:</p>
+
+    <input type="radio" id="rock" name="choice" value="rock" required />
+    <label for="rock">Rock</label><br />
+
+    <input type="radio" id="paper" name="choice" value="paper" />
+    <label for="paper">Paper</label><br />
+
+    <input type="radio" id="scissors" name="choice" value="scissors" />
+    <label for="scissors">Scissors</label><br /><br />
+
+    <input type="submit" value="Play" />
   </form>
 
-  <h2>Play</h2>
-  <form action="/play" method="post">
-    <button type="submit" name="move" value="Rock">Rock</button>
-    <button type="submit" name="move" value="Paper">Paper</button>
-    <button type="submit" name="move" value="Scissors">Scissors</button>
-  </form>
+  <hr />
+  <h2>Or send choice programmatically:</h2>
+  <button onclick="sendChoice()">Send Choice via JS</button>
+
+  <script>
+    function sendChoice() {
+      const selected = document.querySelector('input[name="choice"]:checked');
+      if (!selected) {
+        alert("Please select Rock, Paper, or Scissors first.");
+        return;
+      }
+      const choice = encodeURIComponent(selected.value);
+      const url = `https://othersite.com/play?choice=${choice}`;
+      // Redirect user to the URL
+      window.location.href = url;
+    }
+  </script>
 </body>
 </html>
