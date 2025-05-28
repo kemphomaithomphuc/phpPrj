@@ -20,10 +20,10 @@
 
   <form id="login-form" method="get" action="login.html">
     <label>Email:
-      <input type="text" id="email" name="email" value="" />
+      <input type="text" id="who" name="who" value="" />
     </label><br><br>
     <label>Password:
-      <input type="password" id="password" name="password" />
+      <input type="password" id="pass" name="pass" />
     </label><br><br>
     <button type="submit" name="submit">Log In</button>
   </form>
@@ -32,7 +32,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // Extract query parameters
     function getQueryParams() {
       const params = {};
       location.search.substr(1).split("&").forEach(function(pair) {
@@ -47,9 +46,8 @@
     const errorEl = document.getElementById('login-error');
 
     if (params.submit !== undefined) {
-      // Validate inputs
-      const email = params.email || "";
-      const password = params.password || "";
+      const email = params.who || "";
+      const password = params.pass || "";
 
       const salt = 'XyZzy12*_';
       const correctEmail = 'umsi@umich.edu';
@@ -64,7 +62,6 @@
       } else if (!email.includes('@')) {
         errorEl.textContent = 'Email must have an at-sign (@)';
       } else if (email === correctEmail && md5(salt + password) === correctPasswordHash) {
-        // Redirect to game with email stored in URL param
         window.location.href = "game.html?who=" + encodeURIComponent(email);
       } else {
         errorEl.textContent = 'Incorrect username or password';
