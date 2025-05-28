@@ -1,169 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>4aaa4f26</title>
+  <meta charset="UTF-8" />
+  <title>4aaa4f26 - Rock Paper Scissors</title>
   <style>
-    body { font-family: Arial, sans-serif; }
-    .box {
-      border: 2px solid blue;
-      padding: 20px;
-      width: fit-content;
-      margin: 20px;
+    body {
+      font-family: Arial;
+      max-width: 500px;
+      margin: auto;
+      padding-top: 20px;
     }
-    .error { color: red; }
-    #gameOutput {
-      background-color: #f4f4f4;
-      padding: 10px;
-      margin-top: 10px;
-      white-space: pre-wrap;
-      border-radius: 5px;
-    }
+    .hidden { display: none; }
+    .result { font-weight: bold; margin-top: 10px; }
   </style>
 </head>
-<body onload="checkLoginStatus()">
-<a href="login.html">Please Log In</a>
-  <a href="login.html">Please Log In</a>
-<form method="POST">
-  <input type="text" name="who">
-  <input type="password" name="pass">
-  <button type="submit">Log In</button>
-</form>
-<form method="POST">
-  <select name="choice">
-    <option value="Rock">Rock</option>
-    <option value="Paper">Paper</option>
-    <option value="Scissors">Scissors</option>
-  </select>
-  <button type="submit">Play</button>
-</form>
+<body>
+  <h1>Rock Paper Scissors Game</h1>
 
-<form id="loginForm">
-  <label for="who"><strong>User Name</strong></label>
-  <input type="text" id="who" name="who"><br><br>
-
-  <label for="pass"><strong>Password</strong></label>
-  <input type="password" id="pass" name="pass"><br><br>
-
-  <button type="submit">Log In</button>
-  <button type="button" onclick="cancelLogin()">Cancel</button>
-</form>
-<form id="gameForm">
-  <select name="choice">
-    <option value="">Select</option>
-    <option value="Rock">Rock</option>
-    <option value="Paper">Paper</option>
-    <option value="Scissors">Scissors</option>
-  </select>
-  <button type="submit">Play</button>
-</form>
-
-<div id="loginSection" class="box">
-  <h1>Please Log In</h1>
-  <form onsubmit="return checkLogin();">
-    <div id="errorMsg" class="error"></div>
-    <label><strong>User Name</strong><br>
-      <input type="text" id="username">
+  <!-- Login Form -->
+  <div id="login-area">
+    <p>Please log in to play.</p>
+    <label>Email:
+      <input type="text" id="email" />
     </label><br><br>
-
-    <label><strong>Password</strong><br>
-      <input type="password" id="password">
+    <label>Password:
+      <input type="password" id="password" />
     </label><br><br>
+    <button onclick="login()">Login</button>
+    <p id="login-error" style="color:red;"></p>
+  </div>
 
-    <button type="submit">Log In</button>
-    <button type="button" onclick="location.reload()">Cancel</button>
-  </form>
-  <p>For a password hint, view source and find a password hint in the HTML comments.</p>
-  <!-- Hint: The password is the language you're learning followed by 123 -->
-</div>
+  <!-- Game Area -->
+  <div id="game-area" class="hidden">
+    <p>Welcome, <span id="user-name"></span>! <button onclick="logout()">Logout</button></p>
+    <label>Choose your move:
+      <select id="human-move">
+        <option value="-1">Select</option>
+        <option value="0">Rock</option>
+        <option value="1">Paper</option>
+        <option value="2">Scissors</option>
+      </select>
+    </label>
+    <button onclick="play()">Play</button>
+    <p class="result" id="game-result"></p>
+  </div>
 
-<div id="gameSection" class="box" style="display:none;">
-  <h1>Rock Paper Scissors</h1>
-  <p>Welcome: <span id="userNameDisplay"></span></p>
-  <select id="userChoice">
-    <option value="">Select</option>
-    <option value="Rock">Rock</option>
-    <option value="Paper">Paper</option>
-    <option value="Scissors">Scissors</option>
-  </select>
-  <button onclick="playGame()">Play</button>
-  <button onclick="logout()">Logout</button>
-  <div id="gameOutput">Please select a strategy and press Play.</div>
-</div>
+  <script>
+    const correctEmail = 'umsi@umich.edu';
+    const correctPasswordHash = 'e6601cc12271d9e7fcb9a3f45b1fa4b8'; // md5('XyZzy12*_badsecret42')
+    const salt = 'XyZzy12*_';
 
-<script>
-const validUsername = "umsi@umich.edu";
-const validPassword = "badsecret42";
+    function md5(str) {
+      return CryptoJS.MD5(str).toString();
+    }
 
-function checkLogin() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const errorMsg = document.getElementById("errorMsg");
+    function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('login-error');
 
-  if (username === validUsername && password === validPassword) {
-    localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("username", "Chuck"); // customize as needed
-    window.location.href = "game.html";
-    showGame();
-  } else {
-    errorMsg.textContent = "Incorrect password";
-  }
-  return false;
-}
+      if (email === '' || password === '') {
+        error.textContent = 'Email and password are required';
+        return;
+      }
+      if (!email.includes('@')) {
+        error.textContent = 'Email must have an at-sign (@)';
+        return;
+      }
 
-function checkLoginStatus() {
-  if (localStorage.getItem("loggedIn") === "true") {
-    showGame();
-  } else {
-    showLogin();
-  }
-}
+      const hash = md5(salt + password);
+      if (email === correctEmail && hash === correctPasswordHash) {
+        document.getElementById('login-area').classList.add('hidden');
+        document.getElementById('game-area').classList.remove('hidden');
+        document.getElementById('user-name').textContent = email;
+        error.textContent = '';
+      } else {
+        error.textContent = 'Incorrect username or password';
+      }
+    }
 
-function showLogin() {
-  document.getElementById("loginSection").style.display = "block";
-  document.getElementById("gameSection").style.display = "none";
-}
+    function logout() {
+      document.getElementById('login-area').classList.remove('hidden');
+      document.getElementById('game-area').classList.add('hidden');
+      document.getElementById('email').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('game-result').textContent = '';
+    }
 
-function showGame() {
-  document.getElementById("loginSection").style.display = "none";
-  document.getElementById("gameSection").style.display = "block";
-  document.getElementById("userNameDisplay").textContent = localStorage.getItem("username");
-}
+    function play() {
+      const moves = ['Rock', 'Paper', 'Scissors'];
+      const human = parseInt(document.getElementById('human-move').value);
+      const computer = Math.floor(Math.random() * 3);
 
-function logout() {
-  localStorage.removeItem("loggedIn");
-  localStorage.removeItem("username");
-  location.reload();
-}
+      if (human === -1) {
+        document.getElementById('game-result').textContent = 'Please select a move.';
+        return;
+      }
 
-function playGame() {
-  const human = document.getElementById("userChoice").value;
-  const output = document.getElementById("gameOutput");
+      let result;
+      if (human === computer) {
+        result = 'Tie';
+      } else if ((human === 0 && computer === 2) ||
+                 (human === 1 && computer === 0) ||
+                 (human === 2 && computer === 1)) {
+        result = 'You Win';
+      } else {
+        result = 'You Lose';
+      }
 
-  if (!human) {
-    output.textContent = "Please select a strategy and press Play.";
-    return;
-  }
+      document.getElementById('game-result').textContent =
+        `You played ${moves[human]}, Computer played ${moves[computer]}. Result: ${result}`;
+    }
+  </script>
 
-  const choices = ["Rock", "Paper", "Scissors"];
-  const computer = choices[Math.floor(Math.random() * 3)];
-
-  let result = "";
-  if (human === computer) {
-    result = "Tie";
-  } else if (
-    (human === "Rock" && computer === "Scissors") ||
-    (human === "Paper" && computer === "Rock") ||
-    (human === "Scissors" && computer === "Paper")
-  ) {
-    result = "You Win";
-  } else {
-    result = "You Lose";
-  }
-
-  output.textContent += `\nHuman=${human} Computer=${computer} Result=${result}`;
-}
-</script>
-
+  <!-- MD5 Library (CryptoJS) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
