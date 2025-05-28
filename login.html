@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>4aaa4f26</title>
+  <title>4aaa4f26 - Login Page</title>
   <style>
     body {
       font-family: Arial;
@@ -16,54 +16,60 @@
   </style>
 </head>
 <body>
-  <h1><a>Please Log In</a></h1>
+  <h1><a href="login.html">Please Log In</a></h1>
 
-  <form id="login-form" method="post" action="">
+  <form id="login-form" method="get" action="login.html">
     <label>Email:
-      <input type="text" id="email" name="email" />
+      <input type="text" id="email" name="email" value="" />
     </label><br><br>
     <label>Password:
       <input type="password" id="password" name="password" />
     </label><br><br>
-    <button type="submit">Log In</button>
+    <button type="submit" name="submit">Log In</button>
   </form>
 
   <p class="error" id="login-error"></p>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    const correctEmail = 'umsi@umich.edu';
-    const correctPasswordHash = 'e6601cc12271d9e7fcb9a3f45b1fa4b8'; // md5('XyZzy12*_badsecret42')
-    const salt = 'XyZzy12*_';
-
-    function md5(str) {
-      return CryptoJS.MD5(str).toString();
+    // Extract query parameters
+    function getQueryParams() {
+      const params = {};
+      location.search.substr(1).split("&").forEach(function(pair) {
+        if (pair === "") return;
+        const parts = pair.split("=");
+        params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || "");
+      });
+      return params;
     }
 
-    document.getElementById('login-form').onsubmit = function(event) {
-      event.preventDefault();
+    const params = getQueryParams();
+    const errorEl = document.getElementById('login-error');
 
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const error = document.getElementById('login-error');
+    if (params.submit !== undefined) {
+      // Validate inputs
+      const email = params.email || "";
+      const password = params.password || "";
 
-      if (email === '' || password === '') {
-        error.textContent = 'Email and password are required';
-        return;
+      const salt = 'XyZzy12*_';
+      const correctEmail = 'umsi@umich.edu';
+      const correctPasswordHash = 'e6601cc12271d9e7fcb9a3f45b1fa4b8'; // md5(salt + 'badsecret42')
+
+      function md5(str) {
+        return CryptoJS.MD5(str).toString();
       }
-      if (!email.includes('@')) {
-        error.textContent = 'Email must have an at-sign (@)';
-        return;
-      }
 
-      const hash = md5(salt + password);
-      if (email === correctEmail && hash === correctPasswordHash) {
-        localStorage.setItem('who', email);
-        window.location.href = 'game.html';
+      if (email === "" || password === "") {
+        errorEl.textContent = 'Email and password are required';
+      } else if (!email.includes('@')) {
+        errorEl.textContent = 'Email must have an at-sign (@)';
+      } else if (email === correctEmail && md5(salt + password) === correctPasswordHash) {
+        // Redirect to game with email stored in URL param
+        window.location.href = "game.html?who=" + encodeURIComponent(email);
       } else {
-        error.textContent = 'Incorrect username or password';
+        errorEl.textContent = 'Incorrect username or password';
       }
-    };
+    }
   </script>
 </body>
 </html>
