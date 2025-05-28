@@ -34,7 +34,7 @@ function validateLogin() {
   const username = document.getElementById("user").value.trim();
   const password = document.getElementById("pass").value;
 
-  if (password === "php123") {
+  if (password === "badsecret42" && username==="umsi@umich.edu") {
     localStorage.setItem("username", username);
     window.location.href = "game.html";
     return false;
