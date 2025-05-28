@@ -23,7 +23,7 @@ if (isset($_POST['who']) && isset($_POST['pass'])) {
 
 <!DOCTYPE html>
 <html>
-<head><title>Login Page</title></head>
+<head><title>4aaa4f26</title></head>
 <body>
     <h1>Please Log In</h1>
     <?php
