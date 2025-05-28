@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { border: 2px solid blue; padding: 15px; width: fit-content; }
+    select, button { margin-right: 5px; padding: 5px; }
+    .message {
+      background-color: #f5f5f5;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Rock Paper Scissors</h1>
+  <p>Welcome: <strong id="userDisplay"></strong></p>
+
+  <select id="strategy">
+    <option value="">Select</option>
+    <option value="Rock">Rock</option>
+    <option value="Paper">Paper</option>
+    <option value="Scissors">Scissors</option>
+  </select>
+
+  <button onclick="playGame()">Play</button>
+  <button onclick="logout()">Logout</button>
+
+  <div id="output" class="message">
+    Please select a strategy and press Play.
+  </div>
+</div>
+
+<script>
+window.onload = function () {
+  const username = localStorage.getItem("username");
+  if (!username) {
+    alert("Please log in first.");
+    window.location.href = "login.html";
+    return;
+  }
+  document.getElementById("userDisplay").textContent = username;
+};
+
+function playGame() {
+  const strategy = document.getElementById("strategy").value;
+  if (strategy === "") {
+    alert("Please select a move.");
+    return;
+  }
+
+  const choices = ["Rock", "Paper", "Scissors"];
+  const computer = choices[Math.floor(Math.random() * 3)];
+
+  let result = "";
+  if (strategy === computer) {
+    result = "Tie";
+  } else if (
+    (strategy === "Rock" && computer === "Scissors") ||
+    (strategy === "Paper" && computer === "Rock") ||
+    (strategy === "Scissors" && computer === "Paper")
+  ) {
+    result = "You Win";
+  } else {
+    result = "You Lose";
+  }
+
+  const logLine = `Human=${strategy} Computer=${computer} Result=${result}`;
+  const outputDiv = document.getElementById("output");
+
+  if (outputDiv.textContent.trim() === "Please select a strategy and press Play.") {
+    outputDiv.textContent = logLine;
+  } else {
+    outputDiv.textContent += "\n" + logLine;
+  }
+}
+
+function logout() {
+  localStorage.removeItem("username");
+  window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

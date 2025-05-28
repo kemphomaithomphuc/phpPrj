@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Please Log In</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .box { border: 2px solid blue; padding: 15px; width: fit-content; margin-bottom: 20px; }
+    .error { color: red; margin-top: 0; }
+    input[type="text"], input[type="password"] { margin-bottom: 10px; padding: 5px; }
+    input[type="submit"] { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="box" id="login-box">
+  <h1>Please Log In</h1>
+  <p id="error" class="error" style="display: none;">Incorrect password</p>
+  <form id="loginForm" onsubmit="return validateLogin();">
+    <label for="user">User Name</label><br>
+    <input type="text" id="user" name="user" required><br>
+    <label for="pass">Password</label><br>
+    <input type="password" id="pass" name="pass" required><br>
+    <input type="submit" value="Log In">
+    <input type="button" value="Cancel" onclick="cancelLogin();">
+  </form>
+  <p>For a password hint, view source and find a password hint in the HTML comments.</p>
+</div>
+
+<!-- Hint: The password is 'php123' -->
+
+<script>
+function validateLogin() {
+  const username = document.getElementById("user").value.trim();
+  const password = document.getElementById("pass").value;
+
+  if (password === "php123") {
+    localStorage.setItem("username", username);
+    window.location.href = "game.html";
+    return false;
+  } else {
+    document.getElementById("error").style.display = "block";
+    return false;
+  }
+}
+
+function cancelLogin() {
+  document.getElementById("loginForm").reset();
+  document.getElementById("error").style.display = "none";
+}
+</script>
+
+</body>
+</html>
