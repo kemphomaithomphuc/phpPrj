@@ -103,6 +103,7 @@ function checkLogin() {
   if (username === validUsername && password === validPassword) {
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("username", "Chuck"); // customize as needed
+    window.location.href = "game.html";
     showGame();
   } else {
     errorMsg.textContent = "Incorrect password";
