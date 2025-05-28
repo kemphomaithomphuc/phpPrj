@@ -23,6 +23,21 @@
 </head>
 <body onload="checkLoginStatus()">
 <a href="login.html">Please Log In</a>
+  <a href="login.html">Please Log In</a>
+<form method="POST">
+  <input type="text" name="who">
+  <input type="password" name="pass">
+  <button type="submit">Log In</button>
+</form>
+<form method="POST">
+  <select name="choice">
+    <option value="Rock">Rock</option>
+    <option value="Paper">Paper</option>
+    <option value="Scissors">Scissors</option>
+  </select>
+  <button type="submit">Play</button>
+</form>
+
 <form id="loginForm">
   <label for="who"><strong>User Name</strong></label>
   <input type="text" id="who" name="who"><br><br>
